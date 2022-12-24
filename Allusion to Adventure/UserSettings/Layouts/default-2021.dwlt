@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 991
   m_ShowMode: 4
-  m_Title: Inspector
+  m_Title: Project
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -390,13 +390,14 @@ MonoBehaviour:
   m_LastFolders:
   - Assets/Scripts
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: C:\Users\nidro\Projects\UnityProjects\Allusion to Adventure
+  m_LastProjectPath: C:\Users\nidro\Projects\UnityProjects\Allusion-to-Adventure\Allusion
+    to Adventure
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 79}
-    m_SelectedIDs: c8640000
-    m_LastClickedID: 25800
+    m_SelectedIDs: c6640000
+    m_LastClickedID: 25798
     m_ExpandedIDs: 000000004464000046640000486400004a6400004c6400004e64000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -452,7 +453,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c623000008610000d4630000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -553,9 +554,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 24fbffff
-      m_LastClickedID: -1244
-      m_ExpandedIDs: 7af9ffff86f9ffff16fbffff24fbffff26fbffff
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 26fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +19,8 @@ public class Character : MonoBehaviour
     public string type; // тип
     public string typeOfMoving; // тип перемещения
 
-    public Inventory inventory; // инвентарь
+    public GameObject Card; // карточка персонажа
+
     public Characteristics characteristics; // характеристики
     public Equipment equipment; // снаряжение
 
@@ -32,6 +35,7 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
+        SetName();
         SetMaxHealthPoints(characteristics.healthPoints);
 
         actions = new Actions();
@@ -44,6 +48,7 @@ public class Character : MonoBehaviour
         UpdateHealthPoints();
         UpdateType();
         UpdateEquipment();
+        UpdateCharacteristicsCard();
         InteractWithEnemy();
         UpdateTypeOfMoving();
         Die();
@@ -54,6 +59,14 @@ public class Character : MonoBehaviour
         Move();
     }
 
+
+    /// <summary>
+    /// установить имя
+    /// </summary>
+    private void SetName()
+    {
+        gameObject.transform.Find("UI/Name").GetComponent<TMP_Text>().text = name;
+    }
 
     /// <summary>
     /// установить максимальное количество очков здоровья
@@ -90,6 +103,7 @@ public class Character : MonoBehaviour
     /// </summary>
     private void UseHealingPotion()
     {
+        Inventory inventory = Card.transform.Find("Inventory").GetComponent<Inventory>();
         List<Cell> cells = inventory.cells;
 
         foreach (Cell cell in cells)
@@ -140,7 +154,7 @@ public class Character : MonoBehaviour
     /// </summary>
     private void UpdateEquipment()
     {
-        Inventory equipment = inventory.transform.Find("Equipment").GetComponent<Inventory>();
+        Inventory equipment = Card.transform.Find("Equipment").GetComponent<Inventory>();
         List<Cell> cells = equipment.cells;
 
         foreach (Cell cell in cells)
@@ -178,6 +192,38 @@ public class Character : MonoBehaviour
                 equipment.armor = null;
             else
                 equipment.armor = cell.item;
+        }
+    }
+
+    /// <summary>
+    /// обновить карточку характеристик
+    /// </summary>
+    private void UpdateCharacteristicsCard()
+    {
+        GameObject characteristicsCard = Card.transform.Find("Characteristics").gameObject;
+
+        if (characteristicsCard.activeInHierarchy)
+        {
+            characteristicsCard.transform.Find("Name").GetComponentInChildren<TMP_Text>().text = name;
+            characteristicsCard.transform.Find("Type").GetComponentInChildren<TMP_Text>().text = type;
+            characteristicsCard.transform.Find("Action").GetComponentInChildren<TMP_Text>().text = typeOfMoving;
+            characteristicsCard.transform.Find("HealthPoints").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.healthPoints, 1).ToString();
+            if (equipment.armor == null)
+                characteristicsCard.transform.Find("Armor").GetComponentInChildren<TMP_Text>().text = "0";
+            else
+                characteristicsCard.transform.Find("Armor").GetComponentInChildren<TMP_Text>().text = Math.Round(equipment.armor.data.durability, 1).ToString();
+            if (equipment.weapon == null)
+            {
+                characteristicsCard.transform.Find("Damage").GetComponentInChildren<TMP_Text>().text = "0";
+                characteristicsCard.transform.Find("AttackSpeed").GetComponentInChildren<TMP_Text>().text = "0";
+            }
+            else
+            {
+                characteristicsCard.transform.Find("Damage").GetComponentInChildren<TMP_Text>().text = Math.Round(equipment.weapon.data.durability, 1).ToString();
+                characteristicsCard.transform.Find("AttackSpeed").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.attackSpeed, 1).ToString();
+            }
+            characteristicsCard.transform.Find("DetectionRange").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.detectionRange, 1).ToString();
+            characteristicsCard.transform.Find("MoveSpeed").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.moveSpeed, 1).ToString();
         }
     }
 

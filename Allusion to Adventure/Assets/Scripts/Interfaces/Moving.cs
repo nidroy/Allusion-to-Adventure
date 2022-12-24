@@ -243,11 +243,13 @@ public abstract class Moving : MonoBehaviour
     /// <param name="angle">угол поворота</param>
     public void Rotation(int angle)
     {
+        Transform name = character.transform.Find("UI/Name");
         Transform health = character.transform.Find("UI/Health");
         Transform button = character.transform.Find("UI/Button");
 
         character.transform.rotation = Quaternion.Euler(0, angle, 0);
 
+        name.rotation = Quaternion.Euler(0, 0, 0);
         health.rotation = Quaternion.Euler(0, 0, 0);
         button.rotation = Quaternion.Euler(0, 0, 0);
     }
