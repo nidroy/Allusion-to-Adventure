@@ -32,13 +32,15 @@ public class Cell : MonoBehaviour
         else
         {
             if (item.gameObject.activeInHierarchy)
-                image.sprite = sprites[0];
+                image.sprite = sprites[1];
             else
             {
                 if (gameObject.tag == "Weapon")
-                    image.sprite = sprites[1];
-                else if (gameObject.tag == "Armor")
                     image.sprite = sprites[2];
+                else if (gameObject.tag == "Armor")
+                    image.sprite = sprites[3];
+                else
+                    image.sprite = sprites[0];
             }
         }
     }

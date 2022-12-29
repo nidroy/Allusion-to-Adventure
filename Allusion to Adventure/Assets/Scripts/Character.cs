@@ -16,9 +16,6 @@ public class Character : MonoBehaviour
 
     public Character enemy; // враг
 
-    public string type; // тип
-    public string typeOfMoving; // тип перемещения
-
     public GameObject Card; // карточка персонажа
 
     public Characteristics characteristics; // характеристики
@@ -28,15 +25,12 @@ public class Character : MonoBehaviour
 
     private Actions actions; // действия
 
-    private float maxHealthPoints; // максимальное количество очков здоровья
-
     private bool isGround; // находится ли персонаж на земле?
 
 
     private void Start()
     {
-        SetName();
-        SetMaxHealthPoints(characteristics.healthPoints);
+        characteristics.SetName(this);
 
         actions = new Actions();
         actions.FillMovingsDictionary(this);
@@ -45,12 +39,10 @@ public class Character : MonoBehaviour
 
     private void Update()
     {
-        UpdateHealthPoints();
-        UpdateType();
-        UpdateEquipment();
-        UpdateCharacteristicsCard();
+        characteristics.UpdateCharacteristics(this);
+        equipment.UpdateEquipment(this);
+
         InteractWithEnemy();
-        UpdateTypeOfMoving();
         Die();
     }
 
@@ -61,195 +53,12 @@ public class Character : MonoBehaviour
 
 
     /// <summary>
-    /// установить имя
-    /// </summary>
-    private void SetName()
-    {
-        gameObject.transform.Find("UI/Name").GetComponent<TMP_Text>().text = name;
-    }
-
-    /// <summary>
-    /// установить максимальное количество очков здоровья
-    /// </summary>
-    public void SetMaxHealthPoints(float healthPoints)
-    {
-        maxHealthPoints = healthPoints;
-    }
-
-    /// <summary>
-    /// обновить очки здоровья
-    /// </summary>
-    private void UpdateHealthPoints()
-    {
-        HealthRegen();
-        healthPoints.fillAmount = characteristics.healthPoints / maxHealthPoints;
-    }
-
-    /// <summary>
-    /// восстановление здоровья
-    /// </summary>
-    private void HealthRegen()
-    {
-        UseHealingPotion();
-
-        if (characteristics.healthPoints < maxHealthPoints)
-            characteristics.healthPoints += 0.005f * maxHealthPoints * Time.deltaTime;
-        else
-            characteristics.healthPoints = maxHealthPoints;
-    }
-
-    /// <summary>
-    /// использовать целебное зелье
-    /// </summary>
-    private void UseHealingPotion()
-    {
-        Inventory inventory = Card.transform.Find("Inventory").GetComponent<Inventory>();
-        List<Cell> cells = inventory.cells;
-
-        foreach (Cell cell in cells)
-        {
-            if (cell.item != null)
-                if (cell.item.gameObject.activeInHierarchy && cell.item.data.name == "Healing potion" && characteristics.healthPoints < maxHealthPoints - cell.item.data.durability)
-                {
-                    if (int.Parse(cell.item.count.text) > 1)
-                    {
-                        characteristics.healthPoints += cell.item.data.durability;
-                        cell.item.count.text = (int.Parse(cell.item.count.text) - 1).ToString();
-                    }
-                    else
-                    {
-                        characteristics.healthPoints += cell.item.data.durability;
-                        cell.item.gameObject.SetActive(false);
-                    }
-                }
-        }
-    }
-
-    /// <summary>
-    /// обновить тип персонажа
-    /// </summary>
-    private void UpdateType()
-    {
-        if (equipment.weapon == null)
-            type = "Peaceful";
-        else
-            type = "Swordsman";
-
-        UpdateTypeAnim();
-    }
-
-    /// <summary>
-    /// обновить анимацию типа персонажа
-    /// </summary>
-    private void UpdateTypeAnim()
-    {
-        if (type == "Peaceful")
-            anim.SetInteger("type", 0);
-        else if (type == "Swordsman")
-            anim.SetInteger("type", 1);
-    }
-
-    /// <summary>
-    /// обновить снаряжение
-    /// </summary>
-    private void UpdateEquipment()
-    {
-        Inventory equipment = Card.transform.Find("Equipment").GetComponent<Inventory>();
-        List<Cell> cells = equipment.cells;
-
-        foreach (Cell cell in cells)
-        {
-            UpdateWeapon(cell);
-            UpdateArmor(cell);
-        }
-
-    }
-
-    /// <summary>
-    /// обновить оружие
-    /// </summary>
-    /// <param name="cell">ячейка</param>
-    private void UpdateWeapon(Cell cell)
-    {
-        if (cell.tag == "Weapon")
-        {
-            if (cell.item == null || !cell.item.gameObject.activeInHierarchy)
-                equipment.weapon = null;
-            else
-                equipment.weapon = cell.item;
-        }
-    }
-
-    /// <summary>
-    /// обновить броню
-    /// </summary>
-    /// <param name="cell">ячейка</param>
-    private void UpdateArmor(Cell cell)
-    {
-        if (cell.tag == "Armor")
-        {
-            if (cell.item == null || !cell.item.gameObject.activeInHierarchy)
-                equipment.armor = null;
-            else
-                equipment.armor = cell.item;
-        }
-    }
-
-    /// <summary>
-    /// обновить карточку характеристик
-    /// </summary>
-    private void UpdateCharacteristicsCard()
-    {
-        GameObject characteristicsCard = Card.transform.Find("Characteristics").gameObject;
-
-        if (characteristicsCard.activeInHierarchy)
-        {
-            characteristicsCard.transform.Find("Name").GetComponentInChildren<TMP_Text>().text = name;
-            characteristicsCard.transform.Find("Type").GetComponentInChildren<TMP_Text>().text = type;
-            characteristicsCard.transform.Find("Action").GetComponentInChildren<TMP_Text>().text = typeOfMoving;
-            characteristicsCard.transform.Find("HealthPoints").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.healthPoints, 1).ToString();
-            if (equipment.armor == null)
-                characteristicsCard.transform.Find("Armor").GetComponentInChildren<TMP_Text>().text = "0";
-            else
-                characteristicsCard.transform.Find("Armor").GetComponentInChildren<TMP_Text>().text = Math.Round(equipment.armor.data.durability, 1).ToString();
-            if (equipment.weapon == null)
-            {
-                characteristicsCard.transform.Find("Damage").GetComponentInChildren<TMP_Text>().text = "0";
-                characteristicsCard.transform.Find("AttackSpeed").GetComponentInChildren<TMP_Text>().text = "0";
-            }
-            else
-            {
-                characteristicsCard.transform.Find("Damage").GetComponentInChildren<TMP_Text>().text = Math.Round(equipment.weapon.data.durability, 1).ToString();
-                characteristicsCard.transform.Find("AttackSpeed").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.attackSpeed, 1).ToString();
-            }
-            characteristicsCard.transform.Find("DetectionRange").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.detectionRange, 1).ToString();
-            characteristicsCard.transform.Find("MoveSpeed").GetComponentInChildren<TMP_Text>().text = Math.Round(characteristics.moveSpeed, 1).ToString();
-        }
-    }
-
-    /// <summary>
-    /// обновить тип перемещения
-    /// </summary>
-    private void UpdateTypeOfMoving()
-    {
-        if (enemy == null)
-            typeOfMoving = "Patrolling";
-        else
-        {
-            if (type == "Peaceful")
-                typeOfMoving = "Escape";
-            else
-                typeOfMoving = "Following";
-        }
-    }
-
-    /// <summary>
     /// передвигаться
     /// </summary>
     private void Move()
     {
         if (isGround)
-            actions.movingsDictionary[typeOfMoving].Move();
+            actions.movingsDictionary[characteristics.typeOfMoving].Move();
     }
 
     /// <summary>
@@ -258,7 +67,7 @@ public class Character : MonoBehaviour
     private void InteractWithEnemy()
     {
         actions.interactionsWithEnemyDictionary["DetectionEnemy"].InteractWithEnemy();
-        if (type != "Peaceful")
+        if (characteristics.type != "Peaceful")
             actions.interactionsWithEnemyDictionary["AttackingEnemy"].InteractWithEnemy();
     }
 
@@ -267,12 +76,12 @@ public class Character : MonoBehaviour
     /// </summary>
     private void DealDamage()
     {
-        if (enemy != null && equipment.weapon != null)
+        if (enemy != null && characteristics.damage != 0)
         {
-            if (enemy.equipment.armor == null)
-                enemy.characteristics.healthPoints -= equipment.weapon.data.damage;
+            if (enemy.characteristics.armor > 0)
+                enemy.equipment.armor.data.durability -= characteristics.damage;
             else
-                enemy.equipment.armor.data.durability -= equipment.weapon.data.damage;
+                enemy.characteristics.healthPoints -= characteristics.damage;
 
             equipment.weapon.data.durability -= 1;
         }
@@ -327,7 +136,14 @@ public class Character : MonoBehaviour
 [System.Serializable]
 public class Characteristics
 {
+    public string type; // тип
+    public string typeOfMoving; // тип перемещения
+
     public float healthPoints; // очки здоровья
+    public float maxHealthPoints; // максимальное количество очков здоровья
+
+    public float armor; // броня
+    public float damage; // урон
 
     public float detectionRange; // дальность обнаружения
     public float attackRange; // дальность атаки
@@ -336,6 +152,163 @@ public class Characteristics
     public float attackSpeed; // скорость атаки
 
     public float waitingTime; // время ожидания
+
+
+    /// <summary>
+    /// установить имя персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    public void SetName(Character character)
+    {
+        character.transform.Find("UI/Name").GetComponent<TMP_Text>().text = character.name;
+    }
+
+    /// <summary>
+    /// обновить характеристики персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    public void UpdateCharacteristics(Character character)
+    {
+        UpdateType(character);
+        UpdateTypeOfMoving(character);
+        UpdateHealthPoints(character);
+        UpdateArmor(character.equipment);
+        UpdateDamage(character.equipment);
+
+        UpdateCharacteristicsCard(character);
+    }
+
+    /// <summary>
+    /// обновить карточку характеристик персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void UpdateCharacteristicsCard(Character character)
+    {
+        GameObject characteristicsCard = character.Card.transform.Find("Characteristics").gameObject;
+
+        if (characteristicsCard.activeInHierarchy)
+        {
+            characteristicsCard.transform.Find("Name").GetComponentInChildren<TMP_Text>().text = character.name;
+            characteristicsCard.transform.Find("Type").GetComponentInChildren<TMP_Text>().text = type;
+            characteristicsCard.transform.Find("Action").GetComponentInChildren<TMP_Text>().text = typeOfMoving;
+            characteristicsCard.transform.Find("HealthPoints").GetComponentInChildren<TMP_Text>().text = Math.Round(healthPoints, 1).ToString();
+            characteristicsCard.transform.Find("Armor").GetComponentInChildren<TMP_Text>().text = Math.Round(armor, 1).ToString();
+            characteristicsCard.transform.Find("Damage").GetComponentInChildren<TMP_Text>().text = Math.Round(damage, 1).ToString();
+            characteristicsCard.transform.Find("AttackSpeed").GetComponentInChildren<TMP_Text>().text = Math.Round(attackSpeed, 1).ToString();
+            characteristicsCard.transform.Find("DetectionRange").GetComponentInChildren<TMP_Text>().text = Math.Round(detectionRange, 1).ToString();
+            characteristicsCard.transform.Find("MoveSpeed").GetComponentInChildren<TMP_Text>().text = Math.Round(moveSpeed, 1).ToString();
+        }
+    }
+
+    /// <summary>
+    /// обновить тип персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void UpdateType(Character character)
+    {
+        if (character.equipment.weapon == null)
+        {
+            type = "Peaceful";
+            character.anim.SetInteger("type", 0);
+        }
+        else
+        {
+            type = "Swordsman";
+            character.anim.SetInteger("type", 1);
+        }
+    }
+
+    /// <summary>
+    /// обновить тип перемещения персонажа
+    /// </summary>
+    private void UpdateTypeOfMoving(Character character)
+    {
+        if (character.enemy == null)
+            typeOfMoving = "Patrolling";
+        else
+        {
+            if (type == "Peaceful")
+                typeOfMoving = "Escape";
+            else
+                typeOfMoving = "Following";
+        }
+    }
+
+    /// <summary>
+    /// обновить очки здоровья персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void UpdateHealthPoints(Character character)
+    {
+        HealthRegen(character);
+        character.healthPoints.fillAmount = healthPoints / maxHealthPoints;
+    }
+
+    /// <summary>
+    /// восстановление здоровья персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void HealthRegen(Character character)
+    {
+        UseHealingPotion(character);
+
+        if (healthPoints < maxHealthPoints)
+            healthPoints += 0.005f * maxHealthPoints * Time.deltaTime;
+        else
+            healthPoints = maxHealthPoints;
+    }
+
+    /// <summary>
+    /// использовать целебное зелье
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void UseHealingPotion(Character character)
+    {
+        Inventory inventory = character.Card.transform.Find("Inventory").GetComponent<Inventory>();
+        List<Cell> cells = inventory.cells;
+
+        foreach (Cell cell in cells)
+        {
+            if (cell.item != null)
+                if (cell.item.gameObject.activeInHierarchy && cell.item.data.name == "Healing potion" && healthPoints < maxHealthPoints - cell.item.data.durability)
+                {
+                    if (int.Parse(cell.item.count.text) > 1)
+                    {
+                        healthPoints += cell.item.data.durability;
+                        cell.item.count.text = (int.Parse(cell.item.count.text) - 1).ToString();
+                    }
+                    else
+                    {
+                        healthPoints += cell.item.data.durability;
+                        cell.item.gameObject.SetActive(false);
+                    }
+                }
+        }
+    }
+
+    /// <summary>
+    /// обновить броню
+    /// </summary>
+    /// <param name="equipment">снаряжение</param>
+    private void UpdateArmor(Equipment equipment)
+    {
+        if (equipment.armor == null)
+            armor = 0;
+        else
+            armor = equipment.armor.data.durability;
+    }
+
+    /// <summary>
+    /// обновить урон
+    /// </summary>
+    /// <param name="equipment">снаряжение</param>
+    private void UpdateDamage(Equipment equipment)
+    {
+        if (equipment.weapon == null)
+            damage = 0;
+        else
+            damage = equipment.weapon.data.damage;
+    }
 }
 
 /// <summary>
@@ -346,6 +319,53 @@ public class Equipment
 {
     public Item weapon; // оружие
     public Item armor; // броня
+
+
+    /// <summary>
+    /// обновить снаряжение персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    public void UpdateEquipment(Character character)
+    {
+        Inventory equipment = character.Card.transform.Find("Equipment").GetComponent<Inventory>();
+        List<Cell> cells = equipment.cells;
+
+        foreach (Cell cell in cells)
+        {
+            UpdateWeapon(cell);
+            UpdateArmor(cell);
+        }
+    }
+
+    /// <summary>
+    /// обновить оружие
+    /// </summary>
+    /// <param name="cell">ячейка</param>
+    private void UpdateWeapon(Cell cell)
+    {
+        if (cell.tag == "Weapon" && cell.gameObject.activeInHierarchy)
+        {
+            if (cell.item == null || !cell.item.gameObject.activeInHierarchy)
+                weapon = null;
+            else
+                weapon = cell.item;
+        }
+    }
+
+    /// <summary>
+    /// обновить броню
+    /// </summary>
+    /// <param name="cell">ячейка</param>
+    private void UpdateArmor(Cell cell)
+    {
+        if (cell.tag == "Armor" && cell.gameObject.activeInHierarchy)
+        {
+            if (cell.item == null || !cell.item.gameObject.activeInHierarchy)
+                armor = null;
+            else
+                armor = cell.item;
+        }
+    }
 }
 
 /// <summary>
