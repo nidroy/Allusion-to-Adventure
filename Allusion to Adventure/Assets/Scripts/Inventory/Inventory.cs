@@ -45,10 +45,18 @@ public class Inventory : MonoBehaviour
             consumables.damage = data.itemsData[2].damage;
             consumables.sprite = data.itemsData[2].sprite;
 
-            cells[0].item.data = weapon;
-            cells[0].item.image.sprite = weapon.sprite;
+            ItemData axe = new ItemData();
+            axe.id = data.itemsData[3].id;
+            axe.name = data.itemsData[3].name;
+            axe.type = data.itemsData[3].type;
+            axe.durability = data.itemsData[3].durability;
+            axe.damage = data.itemsData[3].damage;
+            axe.sprite = data.itemsData[3].sprite;
+
+            cells[0].item.data = axe;
+            cells[0].item.image.sprite = axe.sprite;
             cells[0].item.count.text = "1";
-            cells[0].item.maxDurability = weapon.durability;
+            cells[0].item.maxDurability = axe.durability;
 
             cells[0].item.gameObject.SetActive(true);
 

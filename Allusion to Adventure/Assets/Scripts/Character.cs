@@ -213,8 +213,16 @@ public class Characteristics
         }
         else
         {
-            type = "Swordsman";
-            character.anim.SetInteger("type", 1);
+            if (character.equipment.weapon.data.name == "Iron sword")
+            {
+                type = "Swordsman";
+                character.anim.SetInteger("type", 1);
+            }
+            else if(character.equipment.weapon.data.name == "Iron axe")
+            {
+                type = "Woodman";
+                character.anim.SetInteger("type", 2);
+            }
         }
     }
 
