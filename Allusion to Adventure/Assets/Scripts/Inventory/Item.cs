@@ -238,7 +238,7 @@ public class Item : MonoBehaviour
             float width = cell.GetComponent<RectTransform>().rect.width / 2;
             float height = cell.GetComponent<RectTransform>().rect.height / 2;
 
-            Vector3 position = cell.transform.position;
+            Vector2 position = cell.transform.position;
 
             if (transform.position.x < position.x + width && transform.position.x > position.x - width &&
                 transform.position.y < position.y + height && transform.position.y > position.y - height)

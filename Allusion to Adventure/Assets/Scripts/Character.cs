@@ -16,6 +16,8 @@ public class Character : MonoBehaviour
 
     public Character enemy; // враг
 
+    public GameObject workObject; // рабочий объект
+
     public GameObject Card; // карточка персонажа
 
     public Characteristics characteristics; // характеристики
@@ -33,17 +35,20 @@ public class Character : MonoBehaviour
         characteristics.SetName(this);
 
         actions = new Actions();
-        actions.FillMovingsDictionary(this);
-        actions.FillInteractionsWithEnemyDictionary(this);
+        actions.FillDictionaries(this);
     }
 
     private void Update()
     {
-        characteristics.UpdateCharacteristics(this);
-        equipment.UpdateEquipment(this);
+        if (!anim.GetBool("isDie"))
+        {
+            characteristics.UpdateCharacteristics(this);
+            equipment.UpdateEquipment(this);
 
-        InteractWithEnemy();
-        Die();
+            InteractWithEnemy();
+            InteractWithObject();
+            Die();
+        }
     }
 
     private void FixedUpdate()
@@ -57,7 +62,7 @@ public class Character : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        if (isGround)
+        if (isGround && !anim.GetBool("isDie"))
             actions.movingsDictionary[characteristics.typeOfMoving].Move();
     }
 
@@ -69,6 +74,14 @@ public class Character : MonoBehaviour
         actions.interactionsWithEnemyDictionary["DetectionEnemy"].InteractWithEnemy();
         if (characteristics.type != "Peaceful")
             actions.interactionsWithEnemyDictionary["AttackingEnemy"].InteractWithEnemy();
+    }
+
+    /// <summary>
+    /// взаимодействовать с объектом
+    /// </summary>
+    private void InteractWithObject()
+    {
+        actions.interactionsWithObjectDictionary["DetectionObject"].InteractWithObject();
     }
 
     /// <summary>
@@ -218,7 +231,7 @@ public class Characteristics
                 type = "Swordsman";
                 character.anim.SetInteger("type", 1);
             }
-            else if(character.equipment.weapon.data.name == "Iron axe")
+            else if (character.equipment.weapon.data.name == "Iron axe")
             {
                 type = "Woodman";
                 character.anim.SetInteger("type", 2);
@@ -232,7 +245,12 @@ public class Characteristics
     private void UpdateTypeOfMoving(Character character)
     {
         if (character.enemy == null)
-            typeOfMoving = "Patrolling";
+        {
+            if (character.workObject != null && Timer.hour >= 8 && Timer.hour <= 20)
+                typeOfMoving = "GoToWork";
+            else
+                typeOfMoving = "Patrolling";
+        }
         else
         {
             if (type == "Peaceful")
@@ -383,30 +401,54 @@ public class Actions
 {
     public Dictionary<string, IMoving> movingsDictionary = new Dictionary<string, IMoving>(); // словарь перемещений
     public Dictionary<string, IInteractionWithEnemy> interactionsWithEnemyDictionary = new Dictionary<string, IInteractionWithEnemy>(); // словарь взаимодействий с противником
+    public Dictionary<string, IInteractionWithObject> interactionsWithObjectDictionary = new Dictionary<string, IInteractionWithObject>(); // словарь взаимодействий с объектом
 
+
+    /// <summary>
+    /// заполнить словари
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    public void FillDictionaries(Character character)
+    {
+        FillMovingsDictionary(character);
+        FillInteractionsWithEnemyDictionary(character);
+        FillInteractionsWithObjectDictionary(character);
+    }
 
     /// <summary>
     /// заполнить словарь перемещений
     /// </summary>
     /// <param name="character">персонаж</param>
-    public void FillMovingsDictionary(Character character)
+    private void FillMovingsDictionary(Character character)
     {
         movingsDictionary.Clear();
 
         movingsDictionary.Add("Patrolling", new Patrolling(character));
         movingsDictionary.Add("Following", new Following(character));
         movingsDictionary.Add("Escape", new Escape(character));
+        movingsDictionary.Add("GoToWork", new GoToWork(character));
     }
 
     /// <summary>
     /// заполнить словарь взаимодействий с противником
     /// </summary>
     /// <param name="character">персонаж</param>
-    public void FillInteractionsWithEnemyDictionary(Character character)
+    private void FillInteractionsWithEnemyDictionary(Character character)
     {
         interactionsWithEnemyDictionary.Clear();
 
         interactionsWithEnemyDictionary.Add("DetectionEnemy", new DetectionEnemy(character));
         interactionsWithEnemyDictionary.Add("AttackingEnemy", new AttackingEnemy(character));
+    }
+
+    /// <summary>
+    /// заполнить словарь взаимодействий с объектом
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void FillInteractionsWithObjectDictionary(Character character)
+    {
+        interactionsWithObjectDictionary.Clear();
+
+        interactionsWithObjectDictionary.Add("DetectionObject", new DetectionObject(character));
     }
 }

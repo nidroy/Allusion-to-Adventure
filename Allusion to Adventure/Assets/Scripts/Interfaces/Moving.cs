@@ -131,16 +131,19 @@ public class Following : Moving, IMoving
     /// </summary>
     public void Move()
     {
-        float enemyDistance = Vector2.Distance(character.transform.position, character.enemy.transform.position);
-
-        if (enemyDistance <= character.characteristics.attackRange)
-            StopMove();
-        else
+        if (character.enemy != null)
         {
-            if (character.enemy.transform.position.x < character.transform.position.x)
-                MoveLeft();
+            float enemyDistance = Vector2.Distance(character.transform.position, character.enemy.transform.position);
+
+            if (enemyDistance <= character.characteristics.attackRange)
+                StopMove();
             else
-                MoveRight();
+            {
+                if (character.enemy.transform.position.x < character.transform.position.x)
+                    MoveLeft();
+                else
+                    MoveRight();
+            }
         }
     }
 }
@@ -169,6 +172,50 @@ public class Escape : Moving, IMoving
             MoveRight();
         else
             MoveLeft();
+    }
+}
+
+/// <summary>
+/// ходить на работу
+/// </summary>
+public class GoToWork : Moving, IMoving
+{
+    /// <summary>
+    /// конструктор хождения на работу
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    public GoToWork(Character character)
+    {
+        this.character = character;
+    }
+
+
+    /// <summary>
+    /// передвигаться
+    /// </summary>
+    public void Move()
+    {
+        if (character.workObject != null)
+            if (character.characteristics.type == "Woodman")
+                GoToWood();
+    }
+
+    /// <summary>
+    /// идти к дереву
+    /// </summary>
+    private void GoToWood()
+    {
+        float woodDistance = Vector2.Distance(character.transform.position, character.workObject.transform.position);
+
+        if (woodDistance <= character.characteristics.attackRange)
+            StopMove();
+        else
+        {
+            if (character.workObject.transform.position.x < character.transform.position.x)
+                MoveLeft();
+            else
+                MoveRight();
+        }
     }
 }
 
