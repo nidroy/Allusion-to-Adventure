@@ -2,39 +2,67 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// интерфейс взаимодействия с противником
+/// интерфейс взаимодействия с объектом
 /// </summary>
-public interface IInteractionWithEnemy
+public interface IInteractionWithObject
 {
     /// <summary>
-    /// взаимодействовать с противником
+    /// взаимодействовать с объектом
     /// </summary>
-    public void InteractWithEnemy();
+    public void InteractWithObject();
 }
 
 
 /// <summary>
-/// обнаружение противника
+/// обнаружение объекта
 /// </summary>
-public class DetectionEnemy : IInteractionWithEnemy
+public class DetectionObject : IInteractionWithObject
 {
     public Character character; // персонаж
 
 
     /// <summary>
-    /// конструктор обнаружения противника
+    /// конструктор обнаружения дерева
     /// </summary>
     /// <param name="character">персонаж</param>
-    public DetectionEnemy(Character character)
+    public DetectionObject(Character character)
     {
         this.character = character;
     }
 
 
     /// <summary>
-    /// взаимодействовать с противником
+    /// взаимодействовать с объектом
     /// </summary>
-    public void InteractWithEnemy()
+    public void InteractWithObject()
+    {
+        Character character = DetectEnemy();
+
+        if (character == null)
+        {
+            this.character.enemy = null;
+
+            if (this.character.characteristics.type == "Woodman")
+            {
+                Wood wood = DetectWood();
+
+                if (wood == null)
+                    this.character.workObject = null;
+                else
+                    this.character.workObject = wood.gameObject;
+            }
+            else
+                this.character.workObject = null;
+        }
+        else
+            this.character.enemy = character;
+    }
+
+    /// <summary>
+    /// обнаружить противника
+    /// </summary>
+    /// <returns>ближайший противник</returns>
+    private Character DetectEnemy()
     {
         List<Character> detectedEnemies = DetectEnemies();
 
@@ -51,10 +79,38 @@ public class DetectionEnemy : IInteractionWithEnemy
                     detectedEnemy = enemy;
             }
 
-            character.enemy = detectedEnemy;
+            return detectedEnemy;
         }
         else
-            character.enemy = null;
+            return null;
+    }
+
+    /// <summary>
+    /// обнаружить дерево
+    /// </summary>
+    /// <returns>ближайшее дерево</returns>
+    private Wood DetectWood()
+    {
+        Wood[] woods = Object.FindObjectsOfType<Wood>();
+        woods = System.Array.FindAll(woods, wood => !wood.isStump);
+
+        if (woods.Length > 0)
+        {
+            Wood detectedWood = woods[0];
+
+            foreach (Wood wood in woods)
+            {
+                float detectedWoodDistance = Vector2.Distance(character.transform.position, detectedWood.transform.position);
+                float woodDistance = Vector2.Distance(character.transform.position, wood.transform.position);
+
+                if (woodDistance < detectedWoodDistance)
+                    detectedWood = wood;
+            }
+
+            return detectedWood;
+        }
+        else
+            return null;
     }
 
     /// <summary>
@@ -78,37 +134,52 @@ public class DetectionEnemy : IInteractionWithEnemy
 }
 
 /// <summary>
-/// атака противника
+/// атака объекта
 /// </summary>
-public class AttackingEnemy : IInteractionWithEnemy
+public class AttackingObject : IInteractionWithObject
 {
     public Character character; // персонаж
 
 
     /// <summary>
-    /// конструктор атаки противника
+    /// конструктор атаки объекта
     /// </summary>
     /// <param name="character">персонаж</param>
-    public AttackingEnemy(Character character)
+    public AttackingObject(Character character)
     {
         this.character = character;
     }
 
 
     /// <summary>
-    /// взаимодействовать с противником
+    /// взаимодействовать с объектом
     /// </summary>
-    public void InteractWithEnemy()
+    public void InteractWithObject()
     {
         if (character.enemy == null)
-            StopAttack();
+        {
+            if (character.workObject == null)
+                StopAttack();
+            else
+            {
+                float objectDistance = Vector2.Distance(character.transform.position, character.workObject.transform.position);
+
+                if (objectDistance <= character.characteristics.attackRange)
+                {
+                    RotationToObject(character.workObject.transform.position);
+                    StartAttack();
+                }
+                else
+                    StopAttack();
+            }
+        }
         else
         {
             float enemyDistance = Vector2.Distance(character.transform.position, character.enemy.transform.position);
 
             if (enemyDistance <= character.characteristics.attackRange)
             {
-                RotationToEnemy();
+                RotationToObject(character.enemy.transform.position);
                 StartAttack();
             }
             else
@@ -134,11 +205,12 @@ public class AttackingEnemy : IInteractionWithEnemy
     }
 
     /// <summary>
-    /// поворот к противнику
+    /// поворот к объекту
     /// </summary>
-    private void RotationToEnemy()
+    /// <param name="objectPosition">позиция объекта</param>
+    private void RotationToObject(Vector2 objectPosition)
     {
-        if (character.enemy.transform.position.x < character.transform.position.x)
+        if (objectPosition.x < character.transform.position.x)
             Rotation(180);
         else
             Rotation(0);
@@ -150,11 +222,13 @@ public class AttackingEnemy : IInteractionWithEnemy
     /// <param name="angle">угол поворота</param>
     private void Rotation(int angle)
     {
+        Transform name = character.transform.Find("UI/Name");
         Transform health = character.transform.Find("UI/Health");
         Transform button = character.transform.Find("UI/Button");
 
         character.transform.rotation = Quaternion.Euler(0, angle, 0);
 
+        name.rotation = Quaternion.Euler(0, 0, 0);
         health.rotation = Quaternion.Euler(0, 0, 0);
         button.rotation = Quaternion.Euler(0, 0, 0);
     }

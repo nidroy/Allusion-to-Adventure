@@ -12,6 +12,8 @@ public class Character : MonoBehaviour
     public Rigidbody2D rb; // физика
     public Animator anim; // анимации
 
+    public Timer timer; // мировой таймер
+
     public Image healthPoints; // очки здоровья
 
     public Character enemy; // враг
@@ -45,7 +47,6 @@ public class Character : MonoBehaviour
             characteristics.UpdateCharacteristics(this);
             equipment.UpdateEquipment(this);
 
-            InteractWithEnemy();
             InteractWithObject();
             Die();
         }
@@ -67,21 +68,13 @@ public class Character : MonoBehaviour
     }
 
     /// <summary>
-    /// взаимодействовать с противником
-    /// </summary>
-    private void InteractWithEnemy()
-    {
-        actions.interactionsWithEnemyDictionary["DetectionEnemy"].InteractWithEnemy();
-        if (characteristics.type != "Peaceful")
-            actions.interactionsWithEnemyDictionary["AttackingEnemy"].InteractWithEnemy();
-    }
-
-    /// <summary>
     /// взаимодействовать с объектом
     /// </summary>
     private void InteractWithObject()
     {
         actions.interactionsWithObjectDictionary["DetectionObject"].InteractWithObject();
+        if (characteristics.type != "Peaceful")
+            actions.interactionsWithObjectDictionary["AttackingObject"].InteractWithObject();
     }
 
     /// <summary>
@@ -89,15 +82,32 @@ public class Character : MonoBehaviour
     /// </summary>
     private void DealDamage()
     {
-        if (enemy != null && characteristics.damage != 0)
-        {
-            if (enemy.characteristics.armor > 0)
-                enemy.equipment.armor.data.durability -= characteristics.damage;
-            else
-                enemy.characteristics.healthPoints -= characteristics.damage;
+        if (enemy != null)
+            DealDamageEnemy();
+        else if (workObject != null)
+            DealDamageWood();
+    }
 
-            equipment.weapon.data.durability -= 1;
-        }
+    /// <summary>
+    /// нанести урон врагу
+    /// </summary>
+    private void DealDamageEnemy()
+    {
+        if (enemy.characteristics.armor > 0)
+            enemy.equipment.armor.data.durability -= characteristics.damage;
+        else
+            enemy.characteristics.healthPoints -= characteristics.damage;
+
+        equipment.weapon.data.durability -= 1;
+    }
+
+    /// <summary>
+    /// нанести урон дереву
+    /// </summary>
+    private void DealDamageWood()
+    {
+        workObject.GetComponent<Wood>().healthPoints -= characteristics.damage;
+        equipment.weapon.data.durability -= 1;
     }
 
     /// <summary>
@@ -246,7 +256,7 @@ public class Characteristics
     {
         if (character.enemy == null)
         {
-            if (character.workObject != null && Timer.hour >= 8 && Timer.hour <= 20)
+            if (character.workObject != null && character.timer.hour >= 8 && character.timer.hour <= 20)
                 typeOfMoving = "GoToWork";
             else
                 typeOfMoving = "Patrolling";
@@ -400,7 +410,6 @@ public class Equipment
 public class Actions
 {
     public Dictionary<string, IMoving> movingsDictionary = new Dictionary<string, IMoving>(); // словарь перемещений
-    public Dictionary<string, IInteractionWithEnemy> interactionsWithEnemyDictionary = new Dictionary<string, IInteractionWithEnemy>(); // словарь взаимодействий с противником
     public Dictionary<string, IInteractionWithObject> interactionsWithObjectDictionary = new Dictionary<string, IInteractionWithObject>(); // словарь взаимодействий с объектом
 
 
@@ -411,7 +420,6 @@ public class Actions
     public void FillDictionaries(Character character)
     {
         FillMovingsDictionary(character);
-        FillInteractionsWithEnemyDictionary(character);
         FillInteractionsWithObjectDictionary(character);
     }
 
@@ -430,18 +438,6 @@ public class Actions
     }
 
     /// <summary>
-    /// заполнить словарь взаимодействий с противником
-    /// </summary>
-    /// <param name="character">персонаж</param>
-    private void FillInteractionsWithEnemyDictionary(Character character)
-    {
-        interactionsWithEnemyDictionary.Clear();
-
-        interactionsWithEnemyDictionary.Add("DetectionEnemy", new DetectionEnemy(character));
-        interactionsWithEnemyDictionary.Add("AttackingEnemy", new AttackingEnemy(character));
-    }
-
-    /// <summary>
     /// заполнить словарь взаимодействий с объектом
     /// </summary>
     /// <param name="character">персонаж</param>
@@ -450,5 +446,6 @@ public class Actions
         interactionsWithObjectDictionary.Clear();
 
         interactionsWithObjectDictionary.Add("DetectionObject", new DetectionObject(character));
+        interactionsWithObjectDictionary.Add("AttackingObject", new AttackingObject(character));
     }
 }

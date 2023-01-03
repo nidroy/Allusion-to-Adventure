@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 /// <summary>
 /// интерфейс перемещения
@@ -243,6 +244,41 @@ public class MovingItem : IMoving
     public void Move()
     {
         item.transform.position = Input.mousePosition;
+    }
+}
+
+/// <summary>
+/// перемещение камеры
+/// </summary>
+public class MovingCamera : IMoving
+{
+    public Camera camera; // камера
+
+    public int direction; // направление перемещения
+    public float speed; // скорость перемещения
+
+
+    /// <summary>
+    /// конструктор перемещения камеры
+    /// </summary>
+    /// <param name="camera">камера</param>
+    /// <param name="direction">направление перемещения</param>
+    /// <param name="speed">скорость перемещения</param>
+    public MovingCamera(Camera camera, int direction, float speed)
+    {
+        this.camera = camera;
+        this.direction = direction;
+        this.speed = speed;
+    }
+
+
+    /// <summary>
+    /// передвигаться
+    /// </summary>
+    public void Move()
+    {
+        Vector2 direction = new Vector2(this.direction, camera.transform.position.y);
+        camera.transform.Translate(direction.normalized * speed);
     }
 }
 
