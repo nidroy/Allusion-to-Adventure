@@ -12,8 +12,6 @@ public class Character : MonoBehaviour
     public Rigidbody2D rb; // физика
     public Animator anim; // анимации
 
-    public Timer timer; // мировой таймер
-
     public Image healthPoints; // очки здоровья
 
     public Character enemy; // враг
@@ -34,8 +32,6 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
-        characteristics.SetName(this);
-
         actions = new Actions();
         actions.FillDictionaries(this);
     }
@@ -178,10 +174,10 @@ public class Characteristics
 
 
     /// <summary>
-    /// установить имя персонажа
+    /// обновить имя персонажа
     /// </summary>
     /// <param name="character">персонаж</param>
-    public void SetName(Character character)
+    public void UpdateName(Character character)
     {
         character.transform.Find("UI/Name").GetComponent<TMP_Text>().text = character.name;
     }
@@ -192,6 +188,7 @@ public class Characteristics
     /// <param name="character">персонаж</param>
     public void UpdateCharacteristics(Character character)
     {
+        UpdateName(character);
         UpdateType(character);
         UpdateTypeOfMoving(character);
         UpdateHealthPoints(character);
@@ -236,12 +233,12 @@ public class Characteristics
         }
         else
         {
-            if (character.equipment.weapon.data.name == "Iron sword")
+            if (character.equipment.weapon.data.id == 0)
             {
                 type = "Swordsman";
                 character.anim.SetInteger("type", 1);
             }
-            else if (character.equipment.weapon.data.name == "Iron axe")
+            else if (character.equipment.weapon.data.id == 3)
             {
                 type = "Woodman";
                 character.anim.SetInteger("type", 2);
@@ -256,7 +253,7 @@ public class Characteristics
     {
         if (character.enemy == null)
         {
-            if (character.workObject != null && character.timer.hour >= 8 && character.timer.hour <= 20)
+            if (character.workObject != null && Timer.hour >= 8 && Timer.hour <= 20)
                 typeOfMoving = "GoToWork";
             else
                 typeOfMoving = "Patrolling";
@@ -306,7 +303,7 @@ public class Characteristics
         foreach (Cell cell in cells)
         {
             if (cell.item != null)
-                if (cell.item.gameObject.activeInHierarchy && cell.item.data.name == "Healing potion" && healthPoints < maxHealthPoints - cell.item.data.durability)
+                if (cell.item.gameObject.activeInHierarchy && cell.item.data.id == 2 && healthPoints < maxHealthPoints - cell.item.data.durability)
                 {
                     if (int.Parse(cell.item.count.text) > 1)
                     {

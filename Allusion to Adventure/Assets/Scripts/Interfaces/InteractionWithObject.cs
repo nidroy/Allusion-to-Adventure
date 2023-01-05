@@ -22,7 +22,7 @@ public class DetectionObject : IInteractionWithObject
 
 
     /// <summary>
-    /// конструктор обнаружения дерева
+    /// конструктор обнаружения объекта
     /// </summary>
     /// <param name="character">персонаж</param>
     public DetectionObject(Character character)
@@ -72,8 +72,8 @@ public class DetectionObject : IInteractionWithObject
 
             foreach (Character enemy in detectedEnemies)
             {
-                float detectedEnemyDistance = Vector2.Distance(character.transform.position, detectedEnemy.transform.position);
-                float enemyDistance = Vector2.Distance(character.transform.position, enemy.transform.position);
+                float detectedEnemyDistance = Vector2.Distance(character.transform.position, new Vector2(detectedEnemy.transform.position.x, character.transform.position.y));
+                float enemyDistance = Vector2.Distance(character.transform.position, new Vector2(enemy.transform.position.x, character.transform.position.y));
 
                 if (enemyDistance < detectedEnemyDistance)
                     detectedEnemy = enemy;
@@ -100,8 +100,8 @@ public class DetectionObject : IInteractionWithObject
 
             foreach (Wood wood in woods)
             {
-                float detectedWoodDistance = Vector2.Distance(character.transform.position, detectedWood.transform.position);
-                float woodDistance = Vector2.Distance(character.transform.position, wood.transform.position);
+                float detectedWoodDistance = Vector2.Distance(character.transform.position, new Vector2(detectedWood.transform.position.x, character.transform.position.y));
+                float woodDistance = Vector2.Distance(character.transform.position, new Vector2(wood.transform.position.x, character.transform.position.y));
 
                 if (woodDistance < detectedWoodDistance)
                     detectedWood = wood;
@@ -124,7 +124,7 @@ public class DetectionObject : IInteractionWithObject
 
         foreach (Character character in characters)
         {
-            float characterDistance = Vector2.Distance(character.transform.position, this.character.transform.position);
+            float characterDistance = Vector2.Distance(this.character.transform.position, new Vector2(character.transform.position.x, this.character.transform.position.y));
             if (character.gameObject.tag != this.character.gameObject.tag && characterDistance <= this.character.characteristics.detectionRange && !character.anim.GetBool("isDie"))
                 detectedEnemies.Add(character);
         }
@@ -158,11 +158,9 @@ public class AttackingObject : IInteractionWithObject
     {
         if (character.enemy == null)
         {
-            if (character.workObject == null)
-                StopAttack();
-            else
+            if (character.workObject != null && character.characteristics.typeOfMoving == "GoToWork")
             {
-                float objectDistance = Vector2.Distance(character.transform.position, character.workObject.transform.position);
+                float objectDistance = Vector2.Distance(character.transform.position, new Vector2(character.workObject.transform.position.x, character.transform.position.y));
 
                 if (objectDistance <= character.characteristics.attackRange)
                 {
@@ -172,10 +170,12 @@ public class AttackingObject : IInteractionWithObject
                 else
                     StopAttack();
             }
+            else
+                StopAttack();
         }
         else
         {
-            float enemyDistance = Vector2.Distance(character.transform.position, character.enemy.transform.position);
+            float enemyDistance = Vector2.Distance(character.transform.position, new Vector2(character.enemy.transform.position.x, character.transform.position.y));
 
             if (enemyDistance <= character.characteristics.attackRange)
             {

@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// загрузка
+/// </summary>
 public class Loading : MonoBehaviour
 {
     public int sceneID; // идентификатор сцены

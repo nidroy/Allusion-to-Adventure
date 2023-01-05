@@ -11,12 +11,17 @@ public class Wood : MonoBehaviour
     public float growthTime; // время роста
     public float maxGrowthTime; // максимальное время роста
 
+    public Logs logs; // бревна
+
     public bool isStump; // является ли дерево пнем?
+
+    private bool isLogs; // выпали ли бревна?
 
 
     private void Update()
     {
         BecomeStump();
+        SpawnLogs();
         GrowthTimer();
     }
 
@@ -27,9 +32,20 @@ public class Wood : MonoBehaviour
     private void BecomeStump()
     {
         if (healthPoints <= 0)
+        {
+            transform.Find("Tree").gameObject.SetActive(false);
+            transform.Find("Stump").gameObject.SetActive(true);
+
             isStump = true;
-        else
+            isLogs = true;
+        }
+        else if (healthPoints == maxHealthPoints)
+        {
+            transform.Find("Tree").gameObject.SetActive(true);
+            transform.Find("Stump").gameObject.SetActive(false);
+
             isStump = false;
+        }
     }
 
     /// <summary>
@@ -39,12 +55,27 @@ public class Wood : MonoBehaviour
     {
         if (isStump)
         {
-            growthTime -= Time.deltaTime;
+            growthTime += Time.deltaTime;
+            healthPoints = 1;
 
-            if (growthTime <= 0)
+            if (growthTime >= maxGrowthTime)
+            {
+                growthTime = 0;
                 healthPoints = maxHealthPoints;
+            }
         }
-        else
-            growthTime = maxGrowthTime;
+    }
+
+    /// <summary>
+    /// появление бревен
+    /// </summary>
+    private void SpawnLogs()
+    {
+        if (isLogs)
+        {
+            Logs logs = Instantiate(this.logs, transform);
+            logs.transform.position = new Vector3(logs.transform.position.x, logs.transform.position.y, logs.transform.position.z - 1);
+            isLogs = false;
+        }
     }
 }

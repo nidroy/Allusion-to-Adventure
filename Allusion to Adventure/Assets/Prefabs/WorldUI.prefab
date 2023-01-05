@@ -378,7 +378,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f25b9db793a40345830d5009e2ccf95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraMoveSpeed: 2
+  worldBorder:
+  - -50
+  - 38
+  wood: {fileID: 2865299358589037779, guid: 0f5ab524e43b2574087f2a7680968efd, type: 3}
+  forestBorder:
+  - -50
+  - -20
+  character: {fileID: 7925456088865254169, guid: 886cabf71c1f8324386d44c8f4280cf4, type: 3}
+  cityBorder:
+  - -12
+  - 38
+  cameraMoveSpeed: 4
 --- !u!114 &2895749212292850669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -407,7 +418,7 @@ MonoBehaviour:
   - id: 2
     name: Healing potion
     type: Consumables
-    durability: 50
+    durability: 75
     damage: 0
     sprite: {fileID: 21300000, guid: 8f03685aebabe114ea12f3ba77a93902, type: 3}
   - id: 3
@@ -416,6 +427,18 @@ MonoBehaviour:
     durability: 100
     damage: 5
     sprite: {fileID: 21300000, guid: a6250c20e7f2bf54089b38561a3c7417, type: 3}
+  - id: 4
+    name: Logs
+    type: Consumables
+    durability: 10
+    damage: 0
+    sprite: {fileID: 21300000, guid: a7eb5897af1a0294cb26267d591d2139, type: 3}
+  - id: 5
+    name: Coin
+    type: Consumables
+    durability: 1
+    damage: 0
+    sprite: {fileID: 21300000, guid: 6c4848ee4f24c384d9d3d157ceb2dd4e, type: 3}
 --- !u!1 &4062416740542317534
 GameObject:
   m_ObjectHideFlags: 0

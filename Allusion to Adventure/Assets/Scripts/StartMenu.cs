@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// начальное меню
+/// </summary>
 public class StartMenu : MonoBehaviour
 {
     public Animator anim; // анимации
@@ -10,13 +13,15 @@ public class StartMenu : MonoBehaviour
     public TMP_InputField username; // имя пользователя
     public TMP_InputField password; // пароль
 
+    public TMP_Text answer; // ответ
+
 
     /// <summary>
     /// авторизация
     /// </summary>
     public void Authorization()
     {
-        LogIn();
+        LogIn("Authorization");
     }
 
     /// <summary>
@@ -24,7 +29,7 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     public void Registration()
     {
-        LogIn();
+        LogIn("Registration");
     }
 
     /// <summary>
@@ -32,6 +37,10 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     public void NewGame()
     {
+        Proxy.SendMessage("NewGame");
+        World.isNewGame = true;
+        Inventory.isNewGame = true;
+
         LoadScene();
     }
 
@@ -40,6 +49,9 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     public void ContinueGame()
     {
+        World.isNewGame = false;
+        Inventory.isNewGame = false;
+
         LoadScene();
     }
 
@@ -54,9 +66,19 @@ public class StartMenu : MonoBehaviour
     /// <summary>
     /// войти в аккаунт
     /// </summary>
-    public void LogIn()
+    /// <param name="command">команда серверу</param>
+    public void LogIn(string command)
     {
-        anim.SetBool("isLogIn", true);
+        this.answer.text = "";
+
+        Proxy.CreateConnection();
+        Proxy.SendMessage(string.Format("{0}\t{1}\t{2}", command, username.text, password.text));
+        string answer = Proxy.ReceiveMessage();
+
+        if (answer == "Successful")
+            anim.SetBool("isLogIn", true);
+        else
+            this.answer.text = answer;
     }
 
     /// <summary>

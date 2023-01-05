@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 /// <summary>
 /// интерфейс перемещения
@@ -134,7 +133,7 @@ public class Following : Moving, IMoving
     {
         if (character.enemy != null)
         {
-            float enemyDistance = Vector2.Distance(character.transform.position, character.enemy.transform.position);
+            float enemyDistance = Vector2.Distance(character.transform.position, new Vector2(character.enemy.transform.position.x, character.transform.position.y));
 
             if (enemyDistance <= character.characteristics.attackRange)
                 StopMove();
@@ -206,7 +205,7 @@ public class GoToWork : Moving, IMoving
     /// </summary>
     private void GoToWood()
     {
-        float woodDistance = Vector2.Distance(character.transform.position, character.workObject.transform.position);
+        float woodDistance = Vector2.Distance(character.transform.position, new Vector2(character.workObject.transform.position.x, character.transform.position.y));
 
         if (woodDistance <= character.characteristics.attackRange)
             StopMove();
@@ -254,6 +253,7 @@ public class MovingCamera : IMoving
 {
     public Camera camera; // камера
 
+    public float[] border; // границы перемещения
     public int direction; // направление перемещения
     public float speed; // скорость перемещения
 
@@ -264,9 +264,10 @@ public class MovingCamera : IMoving
     /// <param name="camera">камера</param>
     /// <param name="direction">направление перемещения</param>
     /// <param name="speed">скорость перемещения</param>
-    public MovingCamera(Camera camera, int direction, float speed)
+    public MovingCamera(Camera camera, float[] border, int direction, float speed)
     {
         this.camera = camera;
+        this.border = border;
         this.direction = direction;
         this.speed = speed;
     }
@@ -277,8 +278,15 @@ public class MovingCamera : IMoving
     /// </summary>
     public void Move()
     {
-        Vector2 direction = new Vector2(this.direction, camera.transform.position.y);
-        camera.transform.Translate(direction.normalized * speed);
+        if (camera.transform.position.x < border[0])
+            camera.transform.position = new Vector3(border[0], camera.transform.position.y, camera.transform.position.z);
+        else if (camera.transform.position.x > border[1])
+            camera.transform.position = new Vector3(border[1], camera.transform.position.y, camera.transform.position.z);
+        else
+        {
+            Vector2 direction = new Vector2(this.direction, 0);
+            camera.transform.Translate(direction.normalized * speed);
+        }
     }
 }
 

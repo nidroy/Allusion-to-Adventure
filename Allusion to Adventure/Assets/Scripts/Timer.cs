@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Timer : MonoBehaviour
 {
-    public float minute; // минута
-    public int hour; // час
-    public int day; // день
-    public int month; // месяц
-    public int year; // год
+    public static float minute; // минута
+    public static int hour = 8; // час
+    public static int day; // день
+    public static int month; // месяц
+    public static int year; // год
 
     public TMP_Text time; // время
+
 
     private static Timer instance;
 
@@ -21,10 +22,12 @@ public class Timer : MonoBehaviour
         return instance;
     }
 
+
     private void Update()
     {
         TimeCounting();
     }
+
 
     /// <summary>
     /// отсчет времени
