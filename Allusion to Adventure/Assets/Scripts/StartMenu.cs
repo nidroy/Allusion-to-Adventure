@@ -60,6 +60,8 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     public void ExitGame()
     {
+        Proxy.SendMessage("LogOut");
+
         Application.Quit();
     }
 
@@ -88,6 +90,8 @@ public class StartMenu : MonoBehaviour
     {
         username.text = "";
         password.text = "";
+
+        Proxy.SendMessage("LogOut");
 
         anim.SetBool("isLogIn", false);
     }

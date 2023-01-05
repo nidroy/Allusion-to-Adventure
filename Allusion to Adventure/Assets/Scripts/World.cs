@@ -113,18 +113,24 @@ public class World : MonoBehaviour
         for (int i = 0; i < enemiesCount; i++)
         {
             Character character = Instantiate(this.character);
-            character.transform.position = new Vector3(cityBorder[0], 0, 2 + (i * 0.1f));
+            character.transform.position = new Vector3(worldBorder[0], 0, 2 + (i * 0.1f));
             character.border = cityBorder;
 
             character.name = NameGeneration();
             character.tag = "Enemy";
             character.characteristics.healthPoints = Random.Range(80, 120);
             character.characteristics.maxHealthPoints = character.characteristics.healthPoints;
-            character.characteristics.detectionRange = Random.Range(8, 12);
+            character.characteristics.detectionRange = Random.Range(10, 20);
             character.characteristics.attackSpeed = Random.Range(8, 12);
 
+            Transform button = character.transform.Find("UI/Button");
+            button.gameObject.SetActive(false);
+
+            character.Card.SetActive(true);
             Inventory equipment = character.Card.transform.Find("Equipment").GetComponent<Inventory>();
             SpawnSword(equipment);
+            character.equipment.UpdateEquipment(character);
+            character.Card.SetActive(false);
         }
 
         isSpawnEnemies = false;

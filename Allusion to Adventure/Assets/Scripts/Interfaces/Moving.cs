@@ -340,9 +340,12 @@ public abstract class Moving : MonoBehaviour
 
         character.transform.rotation = Quaternion.Euler(0, angle, 0);
 
-        name.rotation = Quaternion.Euler(0, 0, 0);
-        health.rotation = Quaternion.Euler(0, 0, 0);
-        button.rotation = Quaternion.Euler(0, 0, 0);
+        if (name != null)
+            name.rotation = Quaternion.Euler(0, 0, 0);
+        if (health != null)
+            health.rotation = Quaternion.Euler(0, 0, 0);
+        if (button != null)
+            button.rotation = Quaternion.Euler(0, 0, 0);
     }
 
     /// <summary>
