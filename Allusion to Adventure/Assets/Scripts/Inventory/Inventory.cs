@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class Inventory : MonoBehaviour
 {
-    public static bool isNewGame = true; // является ли игра новой?
+    public static bool isNewGame; // является ли игра новой?
 
     public InventoryData data; // данные инвентаря
 

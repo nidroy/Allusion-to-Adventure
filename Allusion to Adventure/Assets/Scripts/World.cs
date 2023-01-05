@@ -5,7 +5,8 @@ using UnityEngine;
 /// </summary>
 public class World : MonoBehaviour
 {
-    public static bool isNewGame = true; // является ли игра новой?
+    public static bool isNewGame; // является ли игра новой?
+    public static bool isSpawnEnemies; // появятся ли противники?
 
     public float[] worldBorder; // границы мира 
 
@@ -35,6 +36,9 @@ public class World : MonoBehaviour
 
         IMoving typeOfMoving = new MovingCamera(camera, worldBorder, direction, cameraMoveSpeed / 100);
         typeOfMoving.Move();
+
+        if (isSpawnEnemies)
+            SpawnEnemies();
     }
 
 
@@ -89,11 +93,41 @@ public class World : MonoBehaviour
             character.border = cityBorder;
 
             character.name = NameGeneration();
+            character.tag = "Human";
             character.characteristics.healthPoints = Random.Range(80, 120);
             character.characteristics.maxHealthPoints = character.characteristics.healthPoints;
             character.characteristics.detectionRange = Random.Range(8, 12);
             character.characteristics.attackSpeed = Random.Range(8, 12);
         }
+    }
+
+    /// <summary>
+    /// появление противников
+    /// </summary>
+    private void SpawnEnemies()
+    {
+        int enemiesCount = Random.Range(1, Timer.day / 10);
+        if (enemiesCount > 5)
+            enemiesCount = 5;
+
+        for (int i = 0; i < enemiesCount; i++)
+        {
+            Character character = Instantiate(this.character);
+            character.transform.position = new Vector3(cityBorder[0], 0, 2 + (i * 0.1f));
+            character.border = cityBorder;
+
+            character.name = NameGeneration();
+            character.tag = "Enemy";
+            character.characteristics.healthPoints = Random.Range(80, 120);
+            character.characteristics.maxHealthPoints = character.characteristics.healthPoints;
+            character.characteristics.detectionRange = Random.Range(8, 12);
+            character.characteristics.attackSpeed = Random.Range(8, 12);
+
+            Inventory equipment = character.Card.transform.Find("Equipment").GetComponent<Inventory>();
+            SpawnSword(equipment);
+        }
+
+        isSpawnEnemies = false;
     }
 
     /// <summary>
@@ -112,5 +146,25 @@ public class World : MonoBehaviour
         }
 
         return name;
+    }
+
+    /// <summary>
+    /// появление меча
+    /// </summary>
+    /// <param name="equipment">снаряжение</param>
+    private void SpawnSword(Inventory equipment)
+    {
+        equipment.cells[0].item.data.id = equipment.data.itemsData[0].id;
+        equipment.cells[0].item.data.name = equipment.data.itemsData[0].name;
+        equipment.cells[0].item.data.type = equipment.data.itemsData[0].type;
+        equipment.cells[0].item.data.durability = equipment.data.itemsData[0].durability;
+        equipment.cells[0].item.data.damage = equipment.data.itemsData[0].damage;
+        equipment.cells[0].item.data.sprite = equipment.data.itemsData[0].sprite;
+
+        equipment.cells[0].item.image.sprite = equipment.cells[0].item.data.sprite;
+        equipment.cells[0].item.count.text = "1";
+        equipment.cells[0].item.maxDurability = equipment.cells[0].item.data.durability;
+
+        equipment.cells[0].item.gameObject.SetActive(true);
     }
 }

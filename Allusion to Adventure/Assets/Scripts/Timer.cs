@@ -5,7 +5,7 @@ using UnityEngine;
 public class Timer : MonoBehaviour
 {
     public static float minute; // минута
-    public static int hour = 8; // час
+    public static int hour; // час
     public static int day; // день
     public static int month; // мес€ц
     public static int year; // год
@@ -46,6 +46,9 @@ public class Timer : MonoBehaviour
         {
             hour = 0;
             day++;
+
+            if (day % 10 == 0)
+                World.isSpawnEnemies = true;
         }
         if (day == 31)
         {

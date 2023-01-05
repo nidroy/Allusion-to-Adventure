@@ -3258,7 +3258,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 7925456088865254170}
   anim: {fileID: 7925456088865254168}
-  timer: {fileID: 4858398659524010994, guid: 557b87d766a88cb498304dd8670249b3, type: 3}
   healthPoints: {fileID: 7925456088128046505}
   enemy: {fileID: 0}
   workObject: {fileID: 0}

@@ -361,13 +361,9 @@ public class Equipment
     public void UpdateEquipment(Character character)
     {
         Inventory equipment = character.Card.transform.Find("Equipment").GetComponent<Inventory>();
-        List<Cell> cells = equipment.cells;
 
-        foreach (Cell cell in cells)
-        {
-            UpdateWeapon(cell);
-            UpdateArmor(cell);
-        }
+        UpdateWeapon(equipment.cells[0]);
+        UpdateArmor(equipment.cells[1]);
     }
 
     /// <summary>
@@ -376,7 +372,7 @@ public class Equipment
     /// <param name="cell">€чейка</param>
     private void UpdateWeapon(Cell cell)
     {
-        if (cell.tag == "Weapon" && cell.gameObject.activeInHierarchy)
+        if (cell.gameObject.activeInHierarchy)
         {
             if (cell.item == null || !cell.item.gameObject.activeInHierarchy)
                 weapon = null;
@@ -391,7 +387,7 @@ public class Equipment
     /// <param name="cell">€чейка</param>
     private void UpdateArmor(Cell cell)
     {
-        if (cell.tag == "Armor" && cell.gameObject.activeInHierarchy)
+        if (cell.gameObject.activeInHierarchy)
         {
             if (cell.item == null || !cell.item.gameObject.activeInHierarchy)
                 armor = null;
