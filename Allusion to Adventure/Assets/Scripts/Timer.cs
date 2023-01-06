@@ -50,9 +50,7 @@ public class Timer : MonoBehaviour
             if (day % 10 == 0)
                 World.isSpawnEnemies = true;
 
-            SendTime();
-            WorldStocks.SendResources();
-            World.SendData();
+            World.isSendData = true;
         }
         if (day == 31)
         {

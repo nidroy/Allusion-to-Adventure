@@ -7,6 +7,7 @@ public class World : MonoBehaviour
 {
     public static bool isNewGame; // €вл€етс€ ли игра новой?
     public static bool isSpawnEnemies; // по€в€тс€ ли противники?
+    public static bool isSendData; // отправить ли данные о мире на сервер?
 
     public float[] worldBorder; // границы мира 
 
@@ -27,6 +28,8 @@ public class World : MonoBehaviour
         {
             SpawnWoods();
             SpawnCharacters();
+
+            isSendData = true;
         }
     }
 
@@ -40,16 +43,7 @@ public class World : MonoBehaviour
         if (isSpawnEnemies)
             SpawnEnemies();
 
-        if (isNewGame)
-        {
-            Timer.SendTime();
-            if (Proxy.ReceiveMessage() == "Time updated")
-                WorldStocks.SendResources();
-            if (Proxy.ReceiveMessage() == "Resources updated")
-                SendData();
-
-            isNewGame = false;
-        }
+        SendData();
     }
 
 
@@ -199,7 +193,24 @@ public class World : MonoBehaviour
     /// <summary>
     /// отправить данные о мире
     /// </summary>
-    public static void SendData()
+    private void SendData()
+    {
+        if (isSendData)
+        {
+            Timer.SendTime();
+            if (Proxy.ReceiveMessage() == "Time updated")
+                WorldStocks.SendResources();
+            if (Proxy.ReceiveMessage() == "Resources updated")
+                SendCharacters();
+
+            isSendData = false;
+        }
+    }
+
+    /// <summary>
+    /// отправить персонажей
+    /// </summary>
+    private void SendCharacters()
     {
         int peaceful = 0;
         int swordsman = 0;
