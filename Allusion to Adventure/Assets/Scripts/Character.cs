@@ -59,7 +59,7 @@ public class Character : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        if (isGround && !anim.GetBool("isDie"))
+        if (isGround && !anim.GetBool("isDie") && characteristics.typeOfMoving != "")
             actions.movingsDictionary[characteristics.typeOfMoving].Move();
     }
 

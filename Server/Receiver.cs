@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.Sqlite;
 
 namespace Server
 {
@@ -124,18 +124,7 @@ namespace Server
     /// </summary>
     public class UpdateWorldReceiver : Receiver
     {
-        public string username; // имя пользователя
         public string[] parameters; // параметры получателя
-
-
-        /// <summary>
-        /// конструктор получателя обновления мира
-        /// </summary>
-        /// <param name="username">имя пользователя</param>
-        public UpdateWorldReceiver(string username)
-        {
-            this.username = username;
-        }
 
 
         /// <summary>
@@ -144,9 +133,9 @@ namespace Server
         /// <returns>ответ</returns>
         public string UpdateWorld()
         {
-            string userID = ExecuteRequest(string.Format("SELECT Id FROM [User] WHERE Username = '{0}';", username));
-            string timeID = ExecuteRequest("SELECT TOP 1 Id FROM [Time] ORDER BY Id DESC;");
-            string worldStocksID = ExecuteRequest("SELECT TOP 1 Id FROM [WorldStocks] ORDER BY Id DESC;");
+            string userID = ExecuteRequest(string.Format("SELECT Id FROM [User] WHERE Username = '{0}';", parameters[4]));
+            string timeID = ExecuteRequest("SELECT Id FROM [Time] ORDER BY Id DESC LIMIT 1;");
+            string worldStocksID = ExecuteRequest("SELECT Id FROM [WorldStocks] ORDER BY Id DESC LIMIT 1;");
 
             ExecuteRequest(string.Format("INSERT INTO [World] (UserID, TimeID, Peaceful, Swordsman, Woodman, Enemy, WorldStocksID) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}');",
                 userID, timeID, parameters[0], parameters[1], parameters[2], parameters[3], worldStocksID));
@@ -167,16 +156,16 @@ namespace Server
         /// <returns>результат</returns>
         public string ExecuteRequest(string request)
         {
-            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\nidro\\Projects\\UnityProjects\\Allusion-to-Adventure\\Database.mdf;Integrated Security=True;Connect Timeout=30";
+            string connectionString = "Data Source=C:\\Users\\nidro\\Projects\\UnityProjects\\Allusion-to-Adventure\\Database.db";
             string answer = "";
 
-            SqlConnection connection = new SqlConnection(connectionString);
+            SqliteConnection connection = new SqliteConnection(connectionString);
 
             connection.Open();
 
-            SqlCommand command = new SqlCommand(request, connection);
+            SqliteCommand command = new SqliteCommand(request, connection);
 
-            SqlDataReader reader = command.ExecuteReader();
+            SqliteDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
                 for (int i = 0; i < reader.FieldCount; i++)

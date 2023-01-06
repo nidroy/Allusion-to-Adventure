@@ -27,10 +27,6 @@ public class World : MonoBehaviour
         {
             SpawnWoods();
             SpawnCharacters();
-
-            Timer.SendTime();
-            WorldStocks.SendResources();
-            SendData();
         }
     }
 
@@ -43,6 +39,17 @@ public class World : MonoBehaviour
 
         if (isSpawnEnemies)
             SpawnEnemies();
+
+        if (isNewGame)
+        {
+            Timer.SendTime();
+            if (Proxy.ReceiveMessage() == "Time updated")
+                WorldStocks.SendResources();
+            if (Proxy.ReceiveMessage() == "Resources updated")
+                SendData();
+
+            isNewGame = false;
+        }
     }
 
 
