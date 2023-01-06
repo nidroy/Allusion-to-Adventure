@@ -27,6 +27,10 @@ public class World : MonoBehaviour
         {
             SpawnWoods();
             SpawnCharacters();
+
+            Timer.SendTime();
+            WorldStocks.SendResources();
+            SendData();
         }
     }
 
@@ -67,6 +71,16 @@ public class World : MonoBehaviour
     }
 
     /// <summary>
+    /// выйти из игры
+    /// </summary>
+    public void ExitGame()
+    {
+        Proxy.SendMessage("LogOut");
+
+        Application.Quit();
+    }
+
+    /// <summary>
     /// появление деревьев
     /// </summary>
     private void SpawnWoods()
@@ -78,6 +92,7 @@ public class World : MonoBehaviour
             spawnPoint += Random.Range(2, 5);
             Wood wood = Instantiate(this.wood);
             wood.transform.position = new Vector3(spawnPoint, 2.1f, 4);
+            WorldStocks.trees += 1;
         }
     }
 
@@ -172,5 +187,34 @@ public class World : MonoBehaviour
         equipment.cells[0].item.maxDurability = equipment.cells[0].item.data.durability;
 
         equipment.cells[0].item.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// отправить данные о мире
+    /// </summary>
+    public static void SendData()
+    {
+        int peaceful = 0;
+        int swordsman = 0;
+        int woodman = 0;
+        int enemy = 0;
+
+        Character[] characters = FindObjectsOfType<Character>();
+        foreach (Character character in characters)
+        {
+            if (character.tag == "Enemy")
+                enemy++;
+            else
+            {
+                if (character.characteristics.type == "Peaceful")
+                    peaceful++;
+                else if (character.characteristics.type == "Swordsman")
+                    swordsman++;
+                else if (character.characteristics.type == "Woodman")
+                    woodman++;
+            }
+        }
+
+        Proxy.SendMessage(string.Format("UpdateWorld\t{0}\t{1}\t{2}\t{3}", peaceful, swordsman, woodman, enemy));
     }
 }

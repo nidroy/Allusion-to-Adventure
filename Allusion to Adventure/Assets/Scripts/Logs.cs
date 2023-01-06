@@ -26,6 +26,7 @@ public class Logs : MonoBehaviour
                     cell.item.count.text = count.ToString();
 
                     Destroy(gameObject);
+                    WorldStocks.logs += 2;
                     return;
                 }
             }
@@ -45,6 +46,7 @@ public class Logs : MonoBehaviour
                 cell.item.gameObject.SetActive(true);
 
                 Destroy(gameObject);
+                WorldStocks.logs += 2;
                 return;
             }
     }

@@ -23,6 +23,8 @@ namespace Server
         {
             this.tcpClient = tcpClient;
             stream = tcpClient.GetStream();
+
+            FillCommands();
         }
 
 
@@ -133,7 +135,6 @@ namespace Server
         /// <returns>ответ</returns>
         private string ExecuteCommand(string request)
         {
-            FillCommands();
             (string command, string[] parameters) = SplitRequest(request);
 
             if (name == "")
@@ -155,6 +156,9 @@ namespace Server
             commands.Add("Authorization", new Authorization(new AuthorizationReceiver()));
             commands.Add("Registration", new Registration(new RegistrationReceiver()));
             commands.Add("LogOut", new LogOut(new LogOutReceiver()));
+            commands.Add("UpdateTime", new UpdateTime(new UpdateTimeReceiver()));
+            commands.Add("UpdateResources", new UpdateResources(new UpdateResourcesReceiver()));
+            commands.Add("UpdateWorld", new UpdateWorld(new UpdateWorldReceiver(name)));
         }
 
         /// <summary>

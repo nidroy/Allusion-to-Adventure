@@ -14,7 +14,8 @@ public class Trader : MonoBehaviour
     /// </summary>
     public void BuyMoney()
     {
-        Purchase(0, 4, 2, 5, 10);
+        if (Purchase(0, 4, 2, 5, 10))
+            WorldStocks.coins += 10;
     }
 
     /// <summary>
@@ -22,7 +23,8 @@ public class Trader : MonoBehaviour
     /// </summary>
     public void BuySword()
     {
-        Purchase(1, 5, 500, 0, 1);
+        if (Purchase(1, 5, 500, 0, 1))
+            WorldStocks.sword += 1;
     }
 
     /// <summary>
@@ -30,7 +32,8 @@ public class Trader : MonoBehaviour
     /// </summary>
     public void BuyAxe()
     {
-        Purchase(2, 5, 100, 3, 1);
+        if (Purchase(2, 5, 100, 3, 1))
+            WorldStocks.axe += 1;
     }
 
     /// <summary>
@@ -38,7 +41,8 @@ public class Trader : MonoBehaviour
     /// </summary>
     public void BuyArmor()
     {
-        Purchase(3, 5, 1000, 1, 1);
+        if (Purchase(3, 5, 1000, 1, 1))
+            WorldStocks.armor += 1;
     }
 
     /// <summary>
@@ -46,7 +50,8 @@ public class Trader : MonoBehaviour
     /// </summary>
     public void BuyHealingPotion()
     {
-        Purchase(4, 5, 100, 2, 1);
+        if (Purchase(4, 5, 100, 2, 1))
+            WorldStocks.healingPotion += 1;
     }
 
     /// <summary>
@@ -57,7 +62,8 @@ public class Trader : MonoBehaviour
     /// <param name="price">цена предмета</param>
     /// <param name="productDataID">идентификатор данных товара</param>
     /// <param name="count">количество товаров</param>
-    private void Purchase(int cellID, int itemDataID, int price, int productDataID, int count)
+    /// <returns>совершена ли покупка?</returns>
+    private bool Purchase(int cellID, int itemDataID, int price, int productDataID, int count)
     {
         Cell cell = GetCell(cellID, itemDataID, productDataID, price);
 
@@ -76,7 +82,11 @@ public class Trader : MonoBehaviour
             }
             else
                 BuyProduct(cell, productDataID, count);
+
+            return true;
         }
+
+        return false;
     }
 
     /// <summary>
