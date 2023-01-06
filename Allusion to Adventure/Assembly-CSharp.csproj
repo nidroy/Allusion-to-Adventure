@@ -63,6 +63,7 @@
     <Compile Include="Assets\Scripts\Interfaces\Moving.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
+    <Compile Include="Assets\Scripts\WorldStocks.cs" />
     <Compile Include="Assets\Scripts\Inventory\Cell.cs" />
     <Compile Include="Assets\Scripts\Wood.cs" />
     <Compile Include="Assets\Scripts\Inventory\InventoryData.cs" />

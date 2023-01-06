@@ -49,6 +49,10 @@ public class Timer : MonoBehaviour
 
             if (day % 10 == 0)
                 World.isSpawnEnemies = true;
+
+            SendTime();
+            WorldStocks.SendResources();
+            World.SendData();
         }
         if (day == 31)
         {
@@ -60,5 +64,13 @@ public class Timer : MonoBehaviour
             month = 0;
             year++;
         }
+    }
+
+    /// <summary>
+    /// отправить время
+    /// </summary>
+    public static void SendTime()
+    {
+        Proxy.SendMessage(string.Format("UpdateTime\t{0}\t{1}\t{2}\t{3}\t{4}", minute, hour, day, month, year));
     }
 }

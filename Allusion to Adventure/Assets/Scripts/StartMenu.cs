@@ -37,9 +37,11 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     public void NewGame()
     {
-        Proxy.SendMessage("NewGame");
         World.isNewGame = true;
         Inventory.isNewGame = true;
+
+        WorldStocks.sword = 2;
+        WorldStocks.axe = 2;
 
         LoadScene();
     }
@@ -52,7 +54,9 @@ public class StartMenu : MonoBehaviour
         World.isNewGame = false;
         Inventory.isNewGame = false;
 
-        LoadScene();
+        NewGame();
+
+        //LoadScene();
     }
 
     /// <summary>
@@ -60,6 +64,8 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     public void ExitGame()
     {
+        Proxy.SendMessage("LogOut");
+
         Application.Quit();
     }
 
@@ -88,6 +94,8 @@ public class StartMenu : MonoBehaviour
     {
         username.text = "";
         password.text = "";
+
+        Proxy.SendMessage("LogOut");
 
         anim.SetBool("isLogIn", false);
     }

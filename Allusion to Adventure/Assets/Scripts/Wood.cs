@@ -62,6 +62,8 @@ public class Wood : MonoBehaviour
             {
                 growthTime = 0;
                 healthPoints = maxHealthPoints;
+                WorldStocks.trees += 1;
+                isStump = false;
             }
         }
     }
@@ -75,6 +77,7 @@ public class Wood : MonoBehaviour
         {
             Logs logs = Instantiate(this.logs, transform);
             logs.transform.position = new Vector3(logs.transform.position.x, logs.transform.position.y, logs.transform.position.z - 1);
+            WorldStocks.trees -= 1;
             isLogs = false;
         }
     }
