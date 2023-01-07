@@ -15,7 +15,10 @@ public class Trader : MonoBehaviour
     public void BuyMoney()
     {
         if (Purchase(0, 4, 2, 5, 10))
+        {
+            WorldStocks.logs -= 2;
             WorldStocks.coins += 10;
+        }
     }
 
     /// <summary>
@@ -24,7 +27,10 @@ public class Trader : MonoBehaviour
     public void BuySword()
     {
         if (Purchase(1, 5, 500, 0, 1))
+        {
+            WorldStocks.coins -= 500;
             WorldStocks.sword += 1;
+        }
     }
 
     /// <summary>
@@ -33,7 +39,10 @@ public class Trader : MonoBehaviour
     public void BuyAxe()
     {
         if (Purchase(2, 5, 100, 3, 1))
+        {
+            WorldStocks.coins -= 100;
             WorldStocks.axe += 1;
+        }
     }
 
     /// <summary>
@@ -42,7 +51,10 @@ public class Trader : MonoBehaviour
     public void BuyArmor()
     {
         if (Purchase(3, 5, 1000, 1, 1))
+        {
+            WorldStocks.coins -= 1000;
             WorldStocks.armor += 1;
+        }
     }
 
     /// <summary>
@@ -51,7 +63,10 @@ public class Trader : MonoBehaviour
     public void BuyHealingPotion()
     {
         if (Purchase(4, 5, 100, 2, 1))
+        {
+            WorldStocks.coins -= 100;
             WorldStocks.healingPotion += 1;
+        }
     }
 
     /// <summary>

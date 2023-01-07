@@ -34,7 +34,7 @@ public class Timer : MonoBehaviour
     /// </summary>
     private void TimeCounting()
     {
-        minute += Time.deltaTime * 2;
+        minute += Time.deltaTime * 20;
         time.text = hour.ToString() + " : " + Convert.ToInt32(minute).ToString();
 
         if (minute >= 60)

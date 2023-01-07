@@ -202,8 +202,8 @@ public class World : MonoBehaviour
                 WorldStocks.SendResources();
             if (Proxy.ReceiveMessage() == "Resources updated")
                 SendCharacters();
-
-            isSendData = false;
+            if (Proxy.ReceiveMessage() == "World updated")
+                isSendData = false;
         }
     }
 

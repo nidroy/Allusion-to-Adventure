@@ -76,7 +76,7 @@ public class Wood : MonoBehaviour
         if (isLogs)
         {
             Logs logs = Instantiate(this.logs, transform);
-            logs.transform.position = new Vector3(logs.transform.position.x, logs.transform.position.y, logs.transform.position.z - 1);
+            logs.transform.position = new Vector3(logs.transform.position.x, logs.transform.position.y, logs.transform.position.z - 2);
             WorldStocks.trees -= 1;
             isLogs = false;
         }
