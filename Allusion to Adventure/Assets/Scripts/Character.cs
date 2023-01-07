@@ -59,7 +59,7 @@ public class Character : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        if (isGround && !anim.GetBool("isDie"))
+        if (isGround && !anim.GetBool("isDie") && characteristics.typeOfMoving != "")
             actions.movingsDictionary[characteristics.typeOfMoving].Move();
     }
 
@@ -233,16 +233,25 @@ public class Characteristics
         }
         else
         {
-            if (character.equipment.weapon.data.id == 0)
+            if (character.equipment.weapon.data.durability > 0)
             {
-                type = "Swordsman";
-                character.anim.SetInteger("type", 1);
+                if (character.equipment.weapon.data.id == 0)
+                {
+                    type = "Swordsman";
+                    character.anim.SetInteger("type", 1);
+                }
+                else if (character.equipment.weapon.data.id == 3)
+                {
+                    type = "Woodman";
+                    character.anim.SetInteger("type", 2);
+                }
             }
-            else if (character.equipment.weapon.data.id == 3)
+            else
             {
-                type = "Woodman";
-                character.anim.SetInteger("type", 2);
+                type = "Peaceful";
+                character.anim.SetInteger("type", 0);
             }
+
         }
     }
 
@@ -253,7 +262,7 @@ public class Characteristics
     {
         if (character.enemy == null)
         {
-            if (character.workObject != null && Timer.hour >= 8 && Timer.hour <= 20)
+            if (character.workObject != null && type == "Woodman" && Timer.hour >= 8 && Timer.hour <= 20)
                 typeOfMoving = "GoToWork";
             else
                 typeOfMoving = "Patrolling";
