@@ -5,6 +5,7 @@ import numpy as np
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
 from sqlite3 import Error
 
 # создание подключения
@@ -34,6 +35,9 @@ df = world_df.join(time_df.set_index("Id"), on="TimeID").join(world_stocks_df.se
 df = df.drop(["Id", "UserID", "TimeID", "WorldStocksID"], axis=1)
 print("Dataframe:\n", df)
 
+# расчет статистических показателей
+print("Cтатистические показатели:\n", df.describe().T)
+
 # построение и обучение модели
 features = df[["Peaceful", "Swordsman", "Woodman", "Enemy", "Day", "Month", "Year", "Sword", "Armor", "HealingPotion",
                "Axe", "Logs", "Trees"]]
@@ -50,3 +54,6 @@ predictions = model.predict(features_test)
 # результат предсказания
 print("То что должно получиться:\n", result_test.to_numpy())
 print("То что получилось:\n", np.around(predictions))
+
+# Коэффициент детерминации
+print("R2:\n", r2_score(result_test, predictions))
