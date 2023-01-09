@@ -174,15 +174,6 @@ public class Characteristics
 
 
     /// <summary>
-    /// обновить имя персонажа
-    /// </summary>
-    /// <param name="character">персонаж</param>
-    public void UpdateName(Character character)
-    {
-        character.transform.Find("UI/Name").GetComponent<TMP_Text>().text = character.name;
-    }
-
-    /// <summary>
     /// обновить характеристики персонажа
     /// </summary>
     /// <param name="character">персонаж</param>
@@ -196,6 +187,15 @@ public class Characteristics
         UpdateDamage(character.equipment);
 
         UpdateCharacteristicsCard(character);
+    }
+
+    /// <summary>
+    /// обновить имя персонажа
+    /// </summary>
+    /// <param name="character">персонаж</param>
+    private void UpdateName(Character character)
+    {
+        character.transform.Find("UI/Name").GetComponent<TMP_Text>().text = character.name;
     }
 
     /// <summary>
@@ -258,7 +258,7 @@ public class Characteristics
     /// <summary>
     /// обновить тип перемещения персонажа
     /// </summary>
-    private void UpdateTypeOfMoving(Character character)
+    public void UpdateTypeOfMoving(Character character)
     {
         if (character.enemy == null)
         {

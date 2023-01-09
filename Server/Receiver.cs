@@ -20,9 +20,17 @@ namespace Server
                 if (parameters[0] != "" || parameters[1] != "")
                 {
                     string[] usernames = ExecuteRequest("SELECT Username FROM [User];").Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
                     foreach (string username in usernames)
                         if (username == parameters[0])
-                            return "Successful";
+                        {
+                            string[] password = ExecuteRequest(string.Format("SELECT Password FROM [User] WHERE Username = '{0}';", username)).Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if (password[0] == parameters[1])
+                                return "Successful";
+                            else
+                                return "Incorrect password";
+                        }
 
                     return "User not found";
                 }
@@ -124,7 +132,18 @@ namespace Server
     /// </summary>
     public class UpdateWorldReceiver : Receiver
     {
+        public string username; // имя пользователя
         public string[] parameters; // параметры получателя
+
+
+        /// <summary>
+        /// конструктор получателя обновления мира
+        /// </summary>
+        /// <param name="username">имя пользователя</param>
+        public UpdateWorldReceiver(string username)
+        {
+            this.username = username;
+        }
 
 
         /// <summary>
@@ -133,7 +152,7 @@ namespace Server
         /// <returns>ответ</returns>
         public string UpdateWorld()
         {
-            string userID = ExecuteRequest(string.Format("SELECT Id FROM [User] WHERE Username = '{0}';", parameters[4]));
+            string userID = ExecuteRequest(string.Format("SELECT Id FROM [User] WHERE Username = '{0}';", username));
             string timeID = ExecuteRequest("SELECT Id FROM [Time] ORDER BY Id DESC LIMIT 1;");
             string worldStocksID = ExecuteRequest("SELECT Id FROM [WorldStocks] ORDER BY Id DESC LIMIT 1;");
 
