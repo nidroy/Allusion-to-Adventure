@@ -138,10 +138,10 @@ namespace Server
             (string command, string[] parameters) = SplitRequest(request);
 
             if (name == "")
+            {
                 name = parameters[0];
-
-            if (command == "UpdateWorld")
-                parameters = parameters.Append(name).ToArray();
+                commands["UpdateWorld"] = new UpdateWorld(new UpdateWorldReceiver(name));
+            }
 
             Invoker invoker = new Invoker();
             invoker.SetCommand(commands[command]);
@@ -161,7 +161,7 @@ namespace Server
             commands.Add("LogOut", new LogOut(new LogOutReceiver()));
             commands.Add("UpdateTime", new UpdateTime(new UpdateTimeReceiver()));
             commands.Add("UpdateResources", new UpdateResources(new UpdateResourcesReceiver()));
-            commands.Add("UpdateWorld", new UpdateWorld(new UpdateWorldReceiver()));
+            commands.Add("UpdateWorld", new UpdateWorld(new UpdateWorldReceiver(name)));
         }
 
         /// <summary>

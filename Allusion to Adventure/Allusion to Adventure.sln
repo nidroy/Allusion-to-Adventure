@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{39125A1F-2399-559F-150B-5494AA7005DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameAssembly", "GameAssembly.csproj", "{9F6C9C6F-9BB0-61F9-04EA-768D9DC5A548}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests.csproj", "{C77A3185-F22F-436C-A5FC-B11BB5340155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +11,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{39125A1F-2399-559F-150B-5494AA7005DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39125A1F-2399-559F-150B-5494AA7005DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39125A1F-2399-559F-150B-5494AA7005DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39125A1F-2399-559F-150B-5494AA7005DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F6C9C6F-9BB0-61F9-04EA-768D9DC5A548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6C9C6F-9BB0-61F9-04EA-768D9DC5A548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F6C9C6F-9BB0-61F9-04EA-768D9DC5A548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F6C9C6F-9BB0-61F9-04EA-768D9DC5A548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C77A3185-F22F-436C-A5FC-B11BB5340155}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C77A3185-F22F-436C-A5FC-B11BB5340155}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C77A3185-F22F-436C-A5FC-B11BB5340155}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C77A3185-F22F-436C-A5FC-B11BB5340155}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
